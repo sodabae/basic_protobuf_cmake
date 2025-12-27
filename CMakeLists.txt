@@ -1,56 +1,115 @@
-cmake_minimum_required(VERSION 3.15)
-project(fetchcontent_protobuf_example LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD 11)
+project(address_book
+  VERSION 1.0
+  LANGUAGES CXX
+)
+
+# ------------------------------------------------------------------------------
+# C++ standard
+# ------------------------------------------------------------------------------
+
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(FetchContent)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-# ---------------------------
-# Fetch protobuf
-# ---------------------------
-FetchContent_Declare(
-  protobuf
-  GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-  GIT_TAG v21.12
-)
+# ------------------------------------------------------------------------------
+# Discover Protobuf (system-installed)
+# ------------------------------------------------------------------------------
 
-set(protobuf_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+# This provides:
+#   protobuf::libprotobuf  - runtime library
+#   protobuf::protoc       - protocol compiler
+find_package(Protobuf CONFIG REQUIRED)
 
-#If symlinks aren't working... and you have a late enough version of protobufs
-#  note, you can find the CMake options by looking at the CMakeList.txt of the protobufs
-#  i.e. grep -R "option(protobuf" ./build/_deps/
-set(protobuf_DISABLE_SYMLINKS ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(protobuf)
-
-# ---------------------------
+# ------------------------------------------------------------------------------
 # Protobuf code generation
-# ---------------------------
-set(PROTO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/proto/person.proto)
+# ------------------------------------------------------------------------------
 
-set(GENERATED_SRC ${CMAKE_CURRENT_BINARY_DIR}/person.pb.cc)
-set(GENERATED_HDR ${CMAKE_CURRENT_BINARY_DIR}/person.pb.h)
-
-add_custom_command(
-  OUTPUT ${GENERATED_SRC} ${GENERATED_HDR}
-  COMMAND protobuf::protoc
-  ARGS
-    --cpp_out=${CMAKE_CURRENT_BINARY_DIR}
-    -I ${CMAKE_CURRENT_SOURCE_DIR}/proto
-    ${PROTO_FILE}
-  DEPENDS ${PROTO_FILE} protobuf::protoc
-  COMMENT "Generating C++ protobuf sources"
+# Input .proto file
+set(PROTO_FILE
+  ${CMAKE_CURRENT_SOURCE_DIR}/proto/person.proto
 )
 
-# Group generated files into a target
-add_library(person_proto ${GENERATED_SRC} ${GENERATED_HDR})
-target_link_libraries(person_proto PUBLIC protobuf::libprotobuf)
-target_include_directories(person_proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+# Output directory for generated files
+set(GENERATED_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}/generated
+)
 
-# ---------------------------
-# Application
-# ---------------------------
-add_executable(protobuf_app src/main.cpp)
-target_link_libraries(protobuf_app PRIVATE person_proto)
+# Generated source/header
+set(GENERATED_SRC
+  ${GENERATED_DIR}/person.pb.cc
+)
 
+set(GENERATED_HDR
+  ${GENERATED_DIR}/person.pb.h
+)
+
+# Ensure the generated directory exists at configure time
+file(MAKE_DIRECTORY ${GENERATED_DIR})
+
+# Custom command that runs protoc
+add_custom_command(
+  OUTPUT
+    ${GENERATED_SRC}
+    ${GENERATED_HDR}
+
+  COMMAND
+    protobuf::protoc
+
+  ARGS
+    --proto_path=${CMAKE_CURRENT_SOURCE_DIR}/proto
+    --cpp_out=${GENERATED_DIR}
+    ${PROTO_FILE}
+
+  DEPENDS
+    ${PROTO_FILE}
+
+  COMMENT
+    "Generating C++ protobuf sources from person.proto"
+
+  VERBATIM
+)
+
+# ------------------------------------------------------------------------------
+# Address book library
+# ------------------------------------------------------------------------------
+
+add_library(address_book
+  src/address_book.cpp
+  ${GENERATED_SRC}
+  ${GENERATED_HDR}
+)
+
+# Public headers live in hdrs/
+# Generated protobuf headers are private implementation details
+target_include_directories(address_book
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/hdrs
+    ${GENERATED_DIR}
+)
+
+# Link against protobuf runtime
+target_link_libraries(address_book
+  PUBLIC
+    protobuf::libprotobuf
+)
+
+# ------------------------------------------------------------------------------
+# Executable
+# ------------------------------------------------------------------------------
+
+add_executable(address_book_app
+  src/main.cpp
+)
+
+target_link_libraries(address_book_app
+  PRIVATE
+    address_book
+)
+
+# ------------------------------------------------------------------------------
+# End of file
+# ------------------------------------------------------------------------------

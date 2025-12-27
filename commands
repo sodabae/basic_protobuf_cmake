@@ -1,6 +1,0 @@
-mkdir build
-cd build
-cmake ..
-cmake --build .
-
-#Should compile protoc and create an app 'protobuf_app'

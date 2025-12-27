@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package tutorial;
 
+/// A person message used through the application
 message Person {
   string name = 1;
   int32 id = 2;
