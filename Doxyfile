@@ -1,0 +1,88 @@
+#---------------------------------
+# Project related configuration
+#---------------------------------
+PROJECT_NAME           = "Address Book Example"
+PROJECT_BRIEF          = "C++ project with Protobuf definitions"
+OUTPUT_DIRECTORY       = docs
+
+#---------------------------------
+# Input
+#---------------------------------
+INPUT                  = hdrs src proto
+FILE_PATTERNS          = *.h *.hpp *.cpp *.proto
+RECURSIVE              = YES
+EXCLUDE                = generated
+
+#---------------------------------
+# Build options
+#---------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+#---------------------------------
+# Source browsing
+#---------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+
+#---------------------------------
+# Comment handling
+#---------------------------------
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = NO
+QT_AUTOBRIEF           = NO
+
+#---------------------------------
+# Language / parsing
+#---------------------------------
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+
+# Treat .proto files as C-like for basic parsing
+EXTENSION_MAPPING      = proto=C
+
+#---------------------------------
+# HTML output
+#---------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+HTML_DYNAMIC_SECTIONS  = YES
+
+#---------------------------------
+# LaTeX / PDF output
+#---------------------------------
+GENERATE_LATEX         = YES
+LATEX_OUTPUT           = latex
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+
+#---------------------------------
+# Graphs (requires graphviz)
+#---------------------------------
+HAVE_DOT               = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+CLASS_DIAGRAMS         = YES
+UML_LOOK               = YES
+
+#---------------------------------
+# Warnings
+#---------------------------------
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+
+#---------------------------------
+# Preprocessor configuration
+#---------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAN_ONLY_PREDEF      = NO
+
+#---------------------------------
+# Misc
+#---------------------------------
+QUIET                  = NO
