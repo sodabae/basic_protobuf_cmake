@@ -15,6 +15,28 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
+include(FetchContent)
+
+# ------------------------------------------------------------------------------
+# spdlog
+#   if spdlog is installed on the system/container, could just use:
+#     find_package(spdlog REQUIRED)
+#   otherwise, need to fetch it using the commands below...
+# ------------------------------------------------------------------------------
+
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG        v1.13.0
+)
+
+# Disable unneeded spdlog features
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_BENCH    OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(spdlog)
+
 # ------------------------------------------------------------------------------
 # Discover Protobuf (system-installed)
 # ------------------------------------------------------------------------------
@@ -95,6 +117,7 @@ target_include_directories(address_book
 target_link_libraries(address_book
   PUBLIC
     protobuf::libprotobuf
+    spdlog::spdlog
 )
 
 # ------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 // Demonstrates creation, modification, and retrieval of Person
 // protobuf objects stored within an AddressBook.
 
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 #include "address_book.h"
 
@@ -36,16 +36,16 @@ int main() {
 
   // Print all entries
   for (const auto& person : book.listPeople()) {
-    std::cout << "ID: " << person.id()
-              << ", Name: " << person.name()
-              << ", Email: " << person.email()
-              << "\n";
+    spdlog::info("ID: {}, Name: {}, Email: {}",
+                 person.id(),
+		 person.name(),
+		 person.email()
+		 );
   }
 
   book.removePerson(1);
 
-  std::cout << "Final AddressBook size: "
-            << book.size() << "\n";
+  spdlog::info("Final AddressBook size: {}", book.size());
 
   return 0;
 }
