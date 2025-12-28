@@ -18,6 +18,24 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 include(FetchContent)
 
 # ------------------------------------------------------------------------------
+# Coverage option
+# ------------------------------------------------------------------------------
+option(ENABLE_COVERAGE "Enable gcov coverage" OFF)
+
+if (ENABLE_COVERAGE)
+  add_library(coverage_compile_flags INTERFACE)
+  target_compile_options(coverage_compile_flags INTERFACE
+    --coverage
+    -O0
+    -g
+  )
+  add_library(coverage_link_flags INTERFACE)
+  target_link_options(coverage_link_flags INTERFACE
+   --coverage
+  )
+endif()
+
+# ------------------------------------------------------------------------------
 # spdlog
 #   if spdlog is installed on the system/container, could just use:
 #     find_package(spdlog REQUIRED)
@@ -119,6 +137,14 @@ target_link_libraries(address_book
     protobuf::libprotobuf
     spdlog::spdlog
 )
+
+if (ENABLE_COVERAGE)
+  #only propogate the link flags forward since only want coverage of the files in the address_book library
+  target_link_libraries(address_book
+    PUBLIC coverage_link_flags
+    PRIVATE coverage_compile_flags
+  )
+endif()
 
 # ------------------------------------------------------------------------------
 # Executable

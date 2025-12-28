@@ -22,3 +22,19 @@ docker run --rm -v "$(pwd):/workspace" doxygen bash -c "cd docs/latex && make"
 Doxygen will create the following files:  
 HTML: docs/html/index.html  
 PDF : docs/latex/refman.pdf
+
+# Tests
+Google tests can by run by executing the test file:
+`./build/tests/address_book_tests`
+
+# Coverage
+The address_book.cpp source code has had coverage added to it. To compile for coverage, use the following commands:
+mkdir build  
+cd build  
+cmake -DENABLE_COVERAGE=ON ..  
+cmake --build .
+
+## Confirming which files have coverage
+Confirmation of coverage being applied to files can be done in 2 ways:
+1. Check the build/compile_commands.json file. The files that are compiled (not linked) with --coverage will have coverage applied
+1. Use the command `find -name "*.gcno"` to see which files were compiled with coverage. After running the executable code (executable file, tests, etc), *.gcda files will appear. You can also check for these files are the code is executed by using the command  `find -name "*.gcda"`
