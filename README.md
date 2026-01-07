@@ -38,3 +38,8 @@ cmake --build .
 Confirmation of coverage being applied to files can be done in 2 ways:
 1. Check the build/compile_commands.json file. The files that are compiled (not linked) with --coverage will have coverage applied
 1. Use the command `find -name "*.gcno"` to see which files were compiled with coverage. After running the executable code (executable file, tests, etc), *.gcda files will appear. You can also check for these files are the code is executed by using the command  `find -name "*.gcda"`
+
+## Generating the coverage results. Run the following from the build directory:
+lcov --capture --directory . --output-file coverage.info  
+lcov --remove coverage.info '/usr/*' '*/generated/*' '*/tests/*' --output-file coverage.cleaned.info  
+genhtml coverage.cleaned.info --output-directory coverage_html
